@@ -1,0 +1,60 @@
+#make fourier expansion
+import math as ma
+import numpy as np
+import random as rd
+#fourier series is xT(t)=a_0+sum(n=1->infinity)(a_n*cos(n*ω_0*t)+b_n*sin(n*ω_0*t))
+#however, even series is just sum of cos, odd sum sin
+pi=np.pi
+x=1
+a_0=0.5
+
+def squave(array_a, array_x, depth):
+    #square sum of coses
+    for n_0 in range(depth):
+        n=n_0+1
+        a_n=(2*np.sin(n*pi/2))/(n*pi)#reason its pi/2 is because taking integral under where y=1 so only half the period and its even so between thing/2 and negative thing/2
+        array_a.append(a_n)
+        array_x.append(array_a[n-1]*np.cos(n*pi*x))
+        #sum of a_n(cos(n)/n)
+#putting a middle line for the functions to rest around, just kept it the same for all of them
+    return array_a, array_x
+
+def trianglave(array_a,array_x,depth):
+    #trangles odd function, y=1+x or y=1-x. integrate from 1-x
+    for n_0 in range(depth):
+        n=n_0+1
+        a_n=2*np.sum((1-np.cos(pi*n))/((n*pi)**2))
+        array_a.append(a_n)
+        array_x.append(array_a[n-1]*np.cos(n*pi*x))
+    return array_a, array_x
+
+def sawtooth(array_b,array_x,depth):
+    #triangular odd function sum of sines? upupupdown
+    for n_0 in range(depth):
+        n=n_0+1
+        b_n=(-np.cos(pi*n))/(pi*n)
+        array_b.append(b_n)
+        array_x.append(array_b[n-1]*np.sin(n*pi*x))
+    return array_b,array_x
+
+def train_of_pulses(array_a,array_x,shift,width,depth):
+    #self-explanatory
+    array_x.append(a_0/width)#putting a middle line for the functions to rest around, just kept it the same for all of them
+    for n_0 in range(depth):
+        n=n_0+1
+        a_n=2*np.sin(n*pi/(2*width))/(n*pi)#reason its pi/2 is because taking integral under where y=1 so only half the period and its even so between thing/2 and negative thing/2
+        array_a.append(a_n)
+        array_x.append(array_a[n-1]*np.cos(n*pi*(x-shift)))
+        #shift is where first pulse is centered
+        #width is 1/(2width) and determines how long the pulse is
+        #the period stays the same
+    return array_a, array_x
+
+squavarray=squave([],[a_0],50)
+triangarray=trianglave([],[a_0],50)
+sawrray=sawtooth([],[a_0],50)
+bloops=train_of_pulses([],[],0.5,4,50)
+print(np.sum(squavarray[1]))
+print(np.sum(triangarray[1]))
+print(np.sum(sawrray[1]))
+print(np.sum(bloops[1]))
